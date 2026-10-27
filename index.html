@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>CH Smart Cabinet</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23222' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'/%3E%3C/svg%3E">
+<style>
+:root{
+  --wall:#d3d7da;--steel:#bfc7cd;--steel-d:#8f9aa2;--face:#e1e6ea;
+  --card:#ffffff;--ink:#1d1d1b;--ink2:#555a5e;--ink3:#7d848a;--line:#c3cad0;
+}
+@media (prefers-color-scheme: dark){
+  :root{--wall:#15181b;--steel:#2d3338;--steel-d:#4f5960;--face:#363d43;--card:#262b2f;--ink:#eceeef;--ink2:#b4babf;--ink3:#8b9298;--line:#4d565d}
+}
+*{box-sizing:border-box}
+html{background:var(--wall)}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;line-height:1.6;
+  background:var(--wall) repeating-linear-gradient(90deg,transparent 0,transparent 159px,rgba(0,0,0,.07) 159px,rgba(0,0,0,.07) 160px)}
+svg.i{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.wrap{max-width:980px;margin:0 auto;padding:28px 16px 32px}
+
+/* 캐비닛 본체 */
+.cab{background:var(--steel);border:2px solid var(--steel-d);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.drawer{position:relative;background:var(--face);border:2px solid var(--steel-d);border-radius:12px;padding:16px 16px 38px}
+.handle{position:absolute;left:50%;bottom:12px;width:120px;height:11px;margin-left:-60px;border-radius:6px;background:var(--steel-d)}
+.label{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.logo{width:48px;height:48px;border-radius:12px;background:var(--ink);color:var(--card);display:flex;align-items:center;justify-content:center;flex:none}
+.logo svg{width:26px;height:26px}
+h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
+.sub{margin:2px 0 0;font-size:14px;color:var(--ink2);line-height:1.55}
+.search{width:220px;max-width:100%;height:38px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;font-size:14px}
+.search:focus{outline:2px solid #378ADD;outline-offset:1px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:inherit;font-size:14px;padding:5px 14px;border-radius:999px;border:1px solid var(--steel-d);background:transparent;color:var(--ink2);cursor:pointer}
+.chip.on{background:var(--ink);color:var(--card);border-color:var(--ink)}
+
+/* 열린 서랍 */
+.inside{--line:#6a737a;--ink3:#aab2b8;background:#2f353a;border:2px solid var(--steel-d);border-radius:12px;padding:14px 18px 24px;box-shadow:inset 0 10px 18px rgba(0,0,0,.5)}
+.rail{height:9px;border-radius:5px;background:#9aa3aa;margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px 16px}
+.fd{display:flex;flex-direction:column}
+.tb{align-self:flex-start;max-width:90%;display:flex;align-items:center;gap:6px;background:var(--k);color:#fff;font-size:14px;font-weight:600;padding:7px 14px;border-radius:10px 10px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb svg{width:16px;height:16px;flex:none}
+.bd{flex:1;min-height:128px;background:var(--card);border:2px solid var(--k);border-radius:0 14px 14px 14px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;gap:12px}
+.bd p{margin:0;font-size:14px;line-height:1.55;color:var(--ink2)}
+.btn{align-self:flex-end;display:inline-flex;align-items:center;gap:6px;background:var(--k);color:#fff;text-decoration:none;font:inherit;font-size:14px;font-weight:600;padding:7px 16px;border:none;border-radius:8px;cursor:pointer}
+.btn:hover{opacity:.88}
+.btn svg{width:15px;height:15px}
+.note{align-self:flex-end;margin:-6px 0 0;font-size:12px;color:var(--ink3)}
+.dz .tb{background:transparent;color:var(--ink3);border:1px dashed var(--line);border-bottom:none;font-weight:500}
+.dz .bd{background:transparent;border:1px dashed var(--line);align-items:center;justify-content:center;color:var(--ink3);font-size:14px}
+.dz .bd span{display:inline-flex;align-items:center;gap:6px}
+.dz svg{width:15px;height:15px}
+.empty{display:none;color:#c7cdd2;padding:6px 0 0;font-size:14px}
+
+/* 학교 현수막과 선생님들 */
+.stage{max-width:640px;margin:34px auto 0}
+.school{display:block;width:100%;height:auto;overflow:visible}
+.school text{font-family:inherit}
+#crowd{display:block;width:100%;height:auto;margin-top:-10px;image-rendering:pixelated;position:relative}
+.floor{height:8px;background:var(--steel-d);border-radius:2px;margin-top:-1px}
+
+@media (max-width:560px){
+  .wrap{padding:16px 10px 24px}
+  .cab{padding:10px;border-radius:14px}
+  .drawer{padding:12px 12px 34px}
+  .label{padding:10px 12px}
+  h1{font-size:19px}
+  .sub{font-size:13px}
+  .search{width:100%}
+  .inside{padding:12px 12px 20px}
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="cab">
+    <header class="drawer">
+      <div class="label">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M7 3h9"/></svg></div>
+          <div>
+            <h1>CH Smart Cabinet</h1>
+            <p class="sub">클릭 한 번으로 열리는 선생님의 스마트 서랍장<br>자주 쓰는 업무 프로그램부터 행정 앱까지, 필요한 모든 도구를 한곳에 쏙!</p>
+          </div>
+        </div>
+        <input class="search" id="q" type="search" placeholder="앱 이름 검색" aria-label="앱 이름 검색" autocomplete="off">
+      </div>
+      <nav class="chips" id="chips" aria-label="카테고리"></nav>
+      <div class="handle" aria-hidden="true"></div>
+    </header>
+    <main class="inside">
+      <div class="rail" aria-hidden="true"></div>
+      <div class="grid" id="grid"></div>
+      <p class="empty" id="empty">찾는 앱이 없습니다. 다른 이름으로 검색해 보세요.</p>
+    </main>
+  </div>
+
+  <footer class="stage">
+    <svg class="school" viewBox="0 -9 620 70" role="img" aria-label="창현고등학교 교사 전용">
+      <path d="M8 60 L8 29 L244 29 L244 16 L310 2 L376 16 L376 29 L612 29 L612 60 Z" fill="#1f3a5f" stroke="#f2c94c" stroke-width="3" stroke-linejoin="round"/>
+      <line x1="310" y1="2" x2="310" y2="-8" stroke="#f2c94c" stroke-width="2"/>
+      <path d="M310 -8 L324 -5 L310 -2 Z" fill="#e63946"/>
+      <circle cx="310" cy="19" r="6" fill="#ffffff" stroke="#f2c94c" stroke-width="1.6"/>
+      <path d="M310 19 V15.5 M310 19 L312.5 20.2" stroke="#1f3a5f" stroke-width="1.3" fill="none"/>
+      <rect x="26" y="37" width="12" height="12" fill="#f2c94c"/><rect x="46" y="37" width="12" height="12" fill="#f2c94c"/>
+      <rect x="562" y="37" width="12" height="12" fill="#f2c94c"/><rect x="582" y="37" width="12" height="12" fill="#f2c94c"/>
+      <text x="310" y="50" text-anchor="middle" font-size="17" font-weight="700" fill="#ffffff" letter-spacing="2.5">창현고등학교 교사 전용</text>
+    </svg>
+    <canvas id="crowd" width="108" height="30" role="img" aria-label="창현고 선생님 30명이 손을 흔드는 픽셀 그림"></canvas>
+    <div class="floor" aria-hidden="true"></div>
+  </footer>
+</div>
+
+<script>
+/* ===== 앱 목록: 새 앱은 아래 APPS에 항목 하나를 추가하면 됩니다 ===== */
+var WEEKLY_DOWNLOAD_URL = "";  /* 창현 위클리 설치 파일 공유 링크를 여기에 넣으세요 */
+
+var CATS = { work: "업무", att: "출석" };
+
+var ICONS = {
+  person: '<path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
+  calendar: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/>',
+  chat: '<path d="M4 5h16v11H9l-5 4z"/>',
+  download: '<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>',
+  open: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>'
+};
+
+var APPS = [
+  {
+    cat: "att", color: "#0F6E56", icon: "person",
+    tab: "자기주도학습 출석", name: "자기주도학습 출석 시스템",
+    desc: "6층 자기주도학습실 좌석 배치도로 출석을 확인하고 기록합니다.",
+    url: "https://self-study-attendance.vercel.app", action: "열기"
+  },
+  {
+    cat: "work", color: "#185FA5", icon: "calendar",
+    tab: "창현 위클리", name: "창현 위클리",
+    desc: "학사일정, 급식, 날씨를 모니터 위에서 한눈에 보는 2주 스케줄러입니다.",
+    url: WEEKLY_DOWNLOAD_URL, action: "다운로드"
+  },
+  {
+    cat: "work", color: "#993C1D", icon: "chat",
+    tab: "업무 소통방", name: "창현고 업무 소통방",
+    desc: "업무 안건을 올리고 함께 확인하는 소통 공간입니다.",
+    url: "https://changhyun-meeting.vercel.app", action: "열기"
+  }
+];
+/* ================================================================ */
+
+function svg(name){
+  return '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">' + ICONS[name] + '</svg>';
+}
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
+  });
+}
+
+var state = { cat: "all", q: "" };
+
+function buildChips(){
+  var seen = {}, html = '<button class="chip on" data-c="all">전체</button>';
+  APPS.forEach(function(a){
+    if (!seen[a.cat]) {
+      seen[a.cat] = true;
+      html += '<button class="chip" data-c="' + esc(a.cat) + '">' + esc(CATS[a.cat] || a.cat) + '</button>';
+    }
+  });
+  var nav = document.getElementById("chips");
+  nav.innerHTML = html;
+  nav.addEventListener("click", function(e){
+    var b = e.target.closest(".chip");
+    if (!b) return;
+    nav.querySelectorAll(".chip").forEach(function(x){ x.classList.remove("on"); });
+    b.classList.add("on");
+    state.cat = b.getAttribute("data-c");
+    render();
+  });
+}
+
+function folder(a){
+  var btn = a.url
+    ? '<a class="btn" href="' + esc(a.url) + '" target="_blank" rel="noopener noreferrer">' + svg(a.action === "다운로드" ? "download" : "open") + esc(a.action) + '</a>'
+    : '<button class="btn" type="button" data-pending="1">' + svg("download") + esc(a.action) + '</button><span class="note" hidden>링크 준비 중입니다.</span>';
+  return '<div class="fd" style="--k:' + a.color + '">' +
+    '<div class="tb">' + svg(a.icon) + esc(a.tab) + '</div>' +
+    '<div class="bd"><p>' + esc(a.desc) + '</p>' + btn + '</div></div>';
+}
+
+function render(){
+  var q = state.q.trim().toLowerCase();
+  var list = APPS.filter(function(a){
+    var okC = state.cat === "all" || a.cat === state.cat;
+    var okQ = !q || (a.name + " " + a.tab).toLowerCase().indexOf(q) > -1;
+    return okC && okQ;
+  });
+  var html = list.map(folder).join("");
+  if (state.cat === "all" && !q) {
+    html += '<div class="fd dz"><div class="tb">새 폴더</div><div class="bd"><span>' + svg("plus") + '추가 예정</span></div></div>';
+  }
+  document.getElementById("grid").innerHTML = html;
+  document.getElementById("empty").style.display = list.length ? "none" : "block";
+}
+
+document.getElementById("grid").addEventListener("click", function(e){
+  var b = e.target.closest("[data-pending]");
+  if (!b) return;
+  var note = b.parentNode.querySelector(".note");
+  if (note) note.hidden = false;
+});
+document.getElementById("q").addEventListener("input", function(e){
+  state.q = e.target.value;
+  render();
+});
+
+buildChips();
+render();
+
+/* ===== 픽셀 선생님 30명 ===== */
+(function(){
+  var cv = document.getElementById("crowd");
+  var cx = cv.getContext && cv.getContext("2d");
+  if (!cx) return;
+
+  function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  var R = rng(2027);
+  function pick(a){ return a[Math.floor(R()*a.length)]; }
+
+  var SKIN=['#f2c9a0','#e0a878','#c68642','#8d5524','#ffdbb4'];
+  var HAIR=['#2b1b0e','#4a2c17','#8b5a2b','#d9a441','#1c1c1c','#a52a2a','#808080'];
+  var SHIRT=['#e63946','#f4a261','#2a9d8f','#457b9d','#9b5de5','#f15bb5','#06d6a0','#ffd166','#118ab2','#ef476f','#8ac926','#ff924c'];
+  var PANTS=['#2b2d42','#3a506b','#5c4033','#6c757d','#1d3557','#344e41'];
+  var ARMS={
+    down:[[1,8,'s'],[1,9,'s'],[1,10,'k']],
+    up:[[1,8,'s'],[0,7,'s'],[0,6,'s'],[0,5,'k']],
+    wave:[[1,8,'s'],[0,7,'k']],
+    out:[[1,8,'s'],[0,8,'k']],
+    hip:[[1,8,'s'],[0,9,'k']]
+  };
+  var ALT={down:'down',up:'wave',wave:'up',out:'hip',hip:'out'};
+  var POSES=[['down','up'],['up','down'],['up','up'],['out','out'],['hip','up'],['wave','down'],['down','wave'],['up','hip'],['wave','wave'],['out','down'],['hip','hip'],['down','down']];
+
+  var people = [];
+  for (var r=0; r<3; r++){
+    for (var i=0; i<10; i++){
+      people.push({
+        x:(r%2?5:0)+i*10+Math.round((R()-.5)*2), y:2+r*6,
+        skin:pick(SKIN), hair:pick(HAIR), shirt:pick(SHIRT), pants:pick(PANTS),
+        style:Math.floor(R()*3), pose:pick(POSES),
+        speed:2+Math.floor(R()*3), phase:Math.floor(R()*4), bob:R()<.35, blink:0
+      });
+    }
+  }
+
+  function draw(o, f){
+    var alt = f%2===1;
+    var oy = o.y + (o.bob && alt ? -1 : 0);
+    function P(x,y,w,h,c){ cx.fillStyle=c; cx.fillRect(o.x+x, oy+y, w, h); }
+    P(2,11,2,2,o.pants); P(5,11,2,2,o.pants); P(2,13,2,1,'#222'); P(5,13,2,1,'#222');
+    P(2,8,5,3,o.shirt);
+    [0,1].forEach(function(side){
+      var pose = alt ? ALT[o.pose[side]] : o.pose[side];
+      ARMS[pose].forEach(function(a){
+        P(side ? 8-a[0] : a[0], a[1], 1, 1, a[2]==='k' ? o.skin : o.shirt);
+      });
+    });
+    P(1,2,7,6,o.skin);
+    P(2,1,5,1,o.hair); P(1,2,7,1,o.hair);
+    if (o.style===1){ P(1,3,1,3,o.hair); P(7,3,1,3,o.hair); }
+    if (o.style===2){ P(3,0,3,1,o.hair); }
+    var eye = o.blink>0 ? '#7a4a2a' : '#222';
+    P(3,5,1,1,eye); P(5,5,1,1,eye);
+    P(4,6,1,1, alt && o.bob ? '#d9534f' : '#b5483a');
+  }
+
+  var tick = 0;
+  function frame(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    people.forEach(function(o){
+      if (o.blink>0) o.blink--;
+      else if (Math.random()<.04) o.blink=1;
+      draw(o, Math.floor((tick+o.phase)/o.speed));
+    });
+    tick++;
+  }
+  frame();
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!still) setInterval(frame, 220);
+})();
+</script>
+</body>
+</html>
