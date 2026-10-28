@@ -65,16 +65,18 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 .lock::after{content:"";position:absolute;left:50%;top:6px;width:4px;height:12px;margin-left:-2px;border-radius:2px;background:#3a4147}
 
 /* 가운데 서랍: 당겨 나오는 앱 서랍 */
-.slot{position:relative;overflow:hidden;background:var(--cav);border-radius:5px;box-shadow:inset 0 14px 18px rgba(0,0,0,.7)}
-.drawer{position:relative}
+/* 2~4번째 칸이 들어가는 자리. 높이는 열렸을 때와 닫혔을 때 같습니다 */
+.bay{position:relative;overflow:hidden;border-radius:7px}
+.drawer{position:relative;z-index:2;will-change:transform}
+.lower{position:absolute;left:0;right:0;z-index:1}
+.d2,.lower{display:flex;flex-direction:column;justify-content:flex-start;padding:18px 0 14px}
 .box{background:var(--box);margin:0 12px;padding:14px 22px 22px;
   box-shadow:inset 16px 0 0 var(--wallside),inset -16px 0 0 var(--wallside),inset 0 12px 16px rgba(0,0,0,.45)}
 .rail{height:9px;border-radius:5px;background:#9aa3aa;margin:0 0 20px}
-.d2{padding:12px 0 14px;box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.14),0 10px 14px rgba(0,0,0,.35)}
+.d2{box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.14),0 -6px 12px rgba(0,0,0,.25)}
 .tag{display:block;width:96px;margin:0 auto 8px;text-align:center;font-size:11px;font-weight:600;letter-spacing:2px;color:#4a545b;
   background:linear-gradient(#f4f6f7,#dde2e5);border:2px solid #8a949b;border-radius:3px;padding:1px 0}
-.d3{padding:14px 0 12px}
-.d3 .tag{color:transparent}
+.lower .tag{color:transparent}
 
 /* 폴더 */
 .grid{--line:#6a737a;--ink3:#aab2b8;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px 16px}
@@ -107,19 +109,14 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 @media (display-mode: standalone){ .install{display:none} }
 
 /* ===== 서랍 열림 효과 ===== */
-.drawer.go{animation:pullOut 1.15s cubic-bezier(.3,.05,.25,1) both}
-@keyframes pullOut{
-  0%{transform:translateY(var(--from)) scale(.985)}
-  72%{transform:translateY(7px) scale(1.012)}
-  86%{transform:translateY(-2px) scale(1)}
-  100%{transform:none}
-}
-.drawer.go .fd{animation:folderUp .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(1s + var(--i) * .11s)}
+/* 처음에는 4단이 모두 닫힘 → APPS 손잡이가 당겨짐 → APPS 서랍이 빠져나오며 아래 두 칸을 덮음 → 폴더가 올라옴 */
+.drawer.closed .fd,.drawer.go .fd{opacity:0}
+.drawer.go .fd{animation:folderUp .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.75s + var(--i) * .11s)}
 @keyframes folderUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-.d1.tug .pull-h{animation:tug .45s ease-out both}
-@keyframes tug{40%{transform:translateY(3px)}}
+.d2.tug .pull-h{animation:tug .4s ease-out both}
+@keyframes tug{45%{transform:translateY(4px) scaleX(.97)}}
 @media (prefers-reduced-motion: reduce){
-  .drawer.go,.drawer.go .fd,.d1.tug .pull-h{animation:none}
+  .drawer.go .fd,.d2.tug .pull-h{animation:none;opacity:1}
 }
 
 /* 학교 현수막과 선생님들 */
@@ -180,18 +177,18 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
       <span class="pull-h" aria-hidden="true"></span>
     </header>
 
-    <div class="slot">
+    <div class="bay" id="bay">
       <div class="drawer" id="drawer">
-        <main class="box">
+        <main class="box" id="box">
           <div class="rail" aria-hidden="true"></div>
           <div class="grid" id="grid"></div>
           <p class="empty" id="empty">찾는 앱이 없습니다. 다른 이름으로 검색해 보세요.</p>
         </main>
         <div class="front d2" id="d2" aria-hidden="true"><span class="tag">APPS</span><span class="pull-h"></span></div>
       </div>
+      <div class="front lower" id="d3" aria-hidden="true"><span class="tag">·</span><span class="pull-h"></span></div>
+      <div class="front lower" id="d4" aria-hidden="true"><span class="tag">·</span><span class="pull-h"></span></div>
     </div>
-
-    <div class="front d3" aria-hidden="true"><span class="tag">·</span><span class="pull-h"></span></div>
   </div>
   <div class="plinth" aria-hidden="true"></div>
   <div class="feet" aria-hidden="true"><i></i><i></i></div>
@@ -297,7 +294,7 @@ function render(){
     return okC && okQ;
   });
   var html = list.map(folder).join("");
-  if (state.cat === "all" && !q) {
+  if (state.cat === "all" && !q && APPS.length < 6) {
     html += '<div class="fd dz" style="--i:' + list.length + '"><div class="tb">새 폴더</div><div class="bd"><span>' + svg("plus") + '추가 예정</span></div></div>';
   }
   document.getElementById("grid").innerHTML = html;
@@ -321,24 +318,57 @@ render();
 /* ===== 서랍 열림 효과: 처음 열 때 한 번만 ===== */
 (function(){
   var drawer = document.getElementById("drawer");
-  var d1 = document.getElementById("d1");
+  var box = document.getElementById("box");
   var d2 = document.getElementById("d2");
+  var d3 = document.getElementById("d3");
+  var d4 = document.getElementById("d4");
+  var GAP = 12, fullH = 0;
+
+  /* 아래 세 칸(APPS, 3단, 4단)을 같은 높이로 맞춤. 서랍 안은 앱 6개(전체 보기 기준)가 들어가는 높이 */
+  function layout(){
+    if (state.cat === "all" && !state.q.trim()) {
+      box.style.minHeight = "";
+      fullH = box.offsetHeight;
+    }
+    if (!fullH) return;
+    box.style.minHeight = fullH + "px";
+    var h = Math.max(84, Math.round((fullH - 2 * GAP) / 2));
+    var lowerH = Math.round((fullH - 2 * GAP) / 2);
+    d2.style.height = h + "px";
+    d3.style.top = (h + GAP) + "px";
+    d3.style.height = lowerH + "px";
+    d4.style.top = (h + GAP + lowerH + GAP) + "px";
+    d4.style.height = lowerH + "px";
+  }
+  layout();
+  var rt;
+  window.addEventListener("resize", function(){ clearTimeout(rt); rt = setTimeout(layout, 120); });
+
   var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (still || !drawer.animate && !("animation" in document.body.style)) return;
-  var from = -(drawer.offsetHeight - d2.offsetHeight);
-  drawer.style.setProperty("--from", from + "px");
-  drawer.style.transform = "translateY(" + from + "px) scale(.985)";
+  if (still || !drawer.animate) return;
+
+  var up = -box.offsetHeight;
+  drawer.style.transform = "translateY(" + up + "px)";
+  drawer.classList.add("closed");
+
   setTimeout(function(){
-    d1.classList.add("tug");
+    d2.classList.add("tug");
     setTimeout(function(){
-      drawer.style.transform = "";
+      drawer.classList.remove("closed");
       drawer.classList.add("go");
-    }, 250);
-  }, 150);
-  setTimeout(function(){
-    drawer.classList.remove("go");
-    d1.classList.remove("tug");
-  }, 2600);
+      drawer.style.transform = "";
+      drawer.animate([
+        { transform: "translateY(" + up + "px)" },
+        { transform: "translateY(7px)", offset: .74 },
+        { transform: "translateY(-2px)", offset: .88 },
+        { transform: "translateY(0)" }
+      ], { duration: 1150, easing: "cubic-bezier(.3,.05,.25,1)" });
+      setTimeout(function(){
+        drawer.classList.remove("go");
+        d2.classList.remove("tug");
+      }, 1800);
+    }, 380);
+  }, 500);
 })();
 
 /* ===== 바탕화면에 설치 ===== */
