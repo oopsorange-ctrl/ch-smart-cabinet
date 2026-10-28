@@ -14,39 +14,70 @@
 <meta name="apple-mobile-web-app-title" content="CH Cabinet">
 <style>
 :root{
-  --wall:#d3d7da;--steel:#bfc7cd;--steel-d:#8f9aa2;--face:#e1e6ea;
+  --wall:#d3d7da;--steel:#c3cbd1;--steel-hi:#e8edf0;--steel-lo:#d0d7dc;--edge:#7f8a92;
+  --cav:#1b1f23;--box:#2f353a;--wallside:#3d454c;
   --card:#ffffff;--ink:#1d1d1b;--ink2:#555a5e;--ink3:#7d848a;--line:#c3cad0;
 }
 @media (prefers-color-scheme: dark){
-  :root{--wall:#15181b;--steel:#2d3338;--steel-d:#4f5960;--face:#363d43;--card:#262b2f;--ink:#eceeef;--ink2:#b4babf;--ink3:#8b9298;--line:#4d565d}
+  :root{--wall:#15181b;--steel:#3a4248;--steel-hi:#4a535a;--steel-lo:#3b4349;--edge:#20262a;--cav:#0d1013;--box:#23282c;--wallside:#30373d;
+    --card:#262b2f;--ink:#eceeef;--ink2:#b4babf;--ink3:#8b9298;--line:#4d565d}
 }
 *{box-sizing:border-box}
 html{background:var(--wall)}
 body{margin:0;min-height:100vh;color:var(--ink);font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;line-height:1.6;
   background:var(--wall) repeating-linear-gradient(90deg,transparent 0,transparent 159px,rgba(0,0,0,.07) 159px,rgba(0,0,0,.07) 160px)}
 svg.i{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.wrap{max-width:980px;margin:0 auto;padding:28px 16px 32px}
+.wrap{max-width:980px;margin:0 auto;padding:30px 20px 32px}
 
-/* 캐비닛 본체 */
-.cab{background:var(--steel);border:2px solid var(--steel-d);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:14px}
-.drawer{position:relative;background:var(--face);border:2px solid var(--steel-d);border-radius:12px;padding:16px 16px 38px}
-.handle{position:absolute;left:50%;bottom:12px;width:120px;height:11px;margin-left:-60px;border-radius:6px;background:var(--steel-d)}
-.label{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:14px}
+/* ===== 철제 캐비닛 ===== */
+.lid{height:16px;margin:0 -10px;background:linear-gradient(var(--steel-hi),var(--steel));border:2px solid var(--edge);border-radius:7px 7px 2px 2px}
+.cab{position:relative;padding:14px 16px 16px;border:2px solid var(--edge);border-top:none;border-bottom:none;display:flex;flex-direction:column;gap:14px;
+  background:linear-gradient(90deg,rgba(0,0,0,.14),transparent 4%,transparent 96%,rgba(0,0,0,.14)),repeating-linear-gradient(0deg,rgba(255,255,255,.12) 0 1px,transparent 1px 3px),var(--steel)}
+.plinth{height:20px;margin:0 8px;background:linear-gradient(#59636a,#3b4349);border:2px solid var(--edge);border-top:none;border-radius:0 0 5px 5px}
+.feet{display:flex;justify-content:space-between;margin:0 30px}
+.feet i{display:block;width:40px;height:8px;background:#2e353a;border-radius:0 0 5px 5px}
+
+.front{position:relative;background:linear-gradient(var(--steel-hi),var(--steel-lo));border:2px solid var(--edge);border-radius:7px;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.14)}
+.pull-h{display:block;width:140px;height:17px;margin:0 auto;border-radius:3px 3px 11px 11px;background:linear-gradient(#a3adb4,#5c676f);
+  box-shadow:0 2px 0 rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.55)}
+
+/* 윗서랍: 이름표 */
+.d1{padding:16px 16px 14px}
+.holder{position:relative;background:linear-gradient(#a9b2b8,#8a949b);border-radius:6px;padding:6px;margin:0 26px 12px}
+.holder::before,.holder::after{content:"";position:absolute;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#eef2f4,#7c868d);box-shadow:0 1px 0 rgba(0,0,0,.3)}
+.holder::before{left:-18px}.holder::after{right:-18px}
+.label{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;background:var(--card);border-radius:4px;padding:12px 16px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
 .brand{display:flex;align-items:center;gap:14px;min-width:0}
 .logo{width:48px;height:48px;border-radius:12px;background:var(--ink);color:var(--card);display:flex;align-items:center;justify-content:center;flex:none}
 .logo svg{width:26px;height:26px}
 h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 .sub{margin:2px 0 0;font-size:14px;color:var(--ink2);line-height:1.55}
-.search{width:220px;max-width:100%;height:38px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;font-size:14px}
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.search{width:200px;max-width:100%;height:38px;padding:0 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;font-size:14px}
 .search:focus{outline:2px solid #378ADD;outline-offset:1px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 26px 12px}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{font:inherit;font-size:14px;padding:5px 14px;border-radius:999px;border:1px solid var(--steel-d);background:transparent;color:var(--ink2);cursor:pointer}
+.chip{font:inherit;font-size:14px;padding:4px 14px;border-radius:999px;border:1px solid var(--edge);background:transparent;color:var(--ink2);cursor:pointer}
 .chip.on{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.lock{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#f1f4f6,#8c969d);border:1px solid var(--edge);position:relative;flex:none}
+.lock::after{content:"";position:absolute;left:50%;top:6px;width:4px;height:12px;margin-left:-2px;border-radius:2px;background:#3a4147}
 
-/* 열린 서랍 */
-.inside{--line:#6a737a;--ink3:#aab2b8;background:#2f353a;border:2px solid var(--steel-d);border-radius:12px;padding:14px 18px 24px;box-shadow:inset 0 10px 18px rgba(0,0,0,.5)}
+/* 가운데 서랍: 당겨 나오는 앱 서랍 */
+.slot{position:relative;overflow:hidden;background:var(--cav);border-radius:5px;box-shadow:inset 0 14px 18px rgba(0,0,0,.7)}
+.drawer{position:relative}
+.box{background:var(--box);margin:0 12px;padding:14px 22px 22px;
+  box-shadow:inset 16px 0 0 var(--wallside),inset -16px 0 0 var(--wallside),inset 0 12px 16px rgba(0,0,0,.45)}
 .rail{height:9px;border-radius:5px;background:#9aa3aa;margin:0 0 20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px 16px}
+.d2{padding:12px 0 14px;box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.14),0 10px 14px rgba(0,0,0,.35)}
+.tag{display:block;width:96px;margin:0 auto 8px;text-align:center;font-size:11px;font-weight:600;letter-spacing:2px;color:#4a545b;
+  background:linear-gradient(#f4f6f7,#dde2e5);border:2px solid #8a949b;border-radius:3px;padding:1px 0}
+.d3{padding:14px 0 12px}
+.d3 .tag{color:transparent}
+
+/* 폴더 */
+.grid{--line:#6a737a;--ink3:#aab2b8;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px 16px}
 .fd{display:flex;flex-direction:column}
 .tb{align-self:flex-start;max-width:90%;display:flex;align-items:center;gap:6px;background:var(--k);color:#fff;font-size:14px;font-weight:600;padding:7px 14px;border-radius:10px 10px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tb svg{width:16px;height:16px;flex:none}
@@ -60,14 +91,13 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 .dz .bd{background:transparent;border:1px dashed var(--line);align-items:center;justify-content:center;color:var(--ink3);font-size:14px}
 .dz .bd span{display:inline-flex;align-items:center;gap:6px}
 .dz svg{width:15px;height:15px}
-.empty{display:none;color:#c7cdd2;padding:6px 0 0;font-size:14px}
+.empty{display:none;color:#c7cdd2;padding:6px 0 0;font-size:14px;margin:0}
 
 /* 바탕화면 설치 */
-.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .install{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border:none;border-radius:8px;background:#1f3a5f;color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
 .install:hover{background:#2a4c78}
 .install svg{width:16px;height:16px}
-.guide{display:none;margin:0 0 14px;background:var(--card);border:2px solid #1f3a5f;border-radius:8px;padding:12px 16px;font-size:14px;color:var(--ink2)}
+.guide{display:none;margin:0 26px 12px;background:var(--card);border:2px solid #1f3a5f;border-radius:6px;padding:12px 16px;font-size:14px;color:var(--ink2)}
 .guide.show{display:block}
 .guide b{color:var(--ink)}
 .guide ol{margin:6px 0 4px;padding-left:20px}
@@ -76,18 +106,20 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 .guide .ok{color:#0F6E56;font-weight:600}
 @media (display-mode: standalone){ .install{display:none} }
 
-/* 서랍 열림 효과 */
-.inside.intro{animation:drawerOpen .75s cubic-bezier(.2,.8,.2,1) both}
-@keyframes drawerOpen{
-  from{transform:translateY(-22px);clip-path:inset(0 0 100% 0 round 12px)}
-  to{transform:none;clip-path:inset(0 0 0 0 round 12px)}
+/* ===== 서랍 열림 효과 ===== */
+.drawer.go{animation:pullOut 1.15s cubic-bezier(.3,.05,.25,1) both}
+@keyframes pullOut{
+  0%{transform:translateY(var(--from)) scale(.985)}
+  72%{transform:translateY(7px) scale(1.012)}
+  86%{transform:translateY(-2px) scale(1)}
+  100%{transform:none}
 }
-.inside.intro .fd{animation:folderUp .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.5s + var(--i) * .1s)}
-@keyframes folderUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-.drawer.intro .handle{animation:tug .5s ease-out .15s both}
-@keyframes tug{0%{transform:none}40%{transform:translateY(3px)}100%{transform:none}}
+.drawer.go .fd{animation:folderUp .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(1s + var(--i) * .11s)}
+@keyframes folderUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.d1.tug .pull-h{animation:tug .45s ease-out both}
+@keyframes tug{40%{transform:translateY(3px)}}
 @media (prefers-reduced-motion: reduce){
-  .inside.intro,.inside.intro .fd,.drawer.intro .handle{animation:none}
+  .drawer.go,.drawer.go .fd,.d1.tug .pull-h{animation:none}
 }
 
 /* 학교 현수막과 선생님들 */
@@ -95,49 +127,74 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 .school{display:block;width:100%;height:auto;overflow:visible}
 .school text{font-family:inherit}
 #crowd{display:block;width:100%;height:auto;margin-top:-10px;image-rendering:pixelated;position:relative}
-.floor{height:8px;background:var(--steel-d);border-radius:2px;margin-top:-1px}
+.floor{height:8px;background:var(--edge);border-radius:2px;margin-top:-1px}
 
-@media (max-width:560px){
-  .wrap{padding:16px 10px 24px}
-  .cab{padding:10px;border-radius:14px}
-  .drawer{padding:12px 12px 34px}
+@media (max-width:640px){
+  .wrap{padding:18px 14px 24px}
+  .lid{margin:0 -6px}
+  .cab{padding:10px 10px 12px;gap:10px}
+  .d1{padding:12px 10px 12px}
+  .holder{margin:0 16px 10px;padding:5px}
+  .holder::before{left:-13px}.holder::after{right:-13px}
+  .holder::before,.holder::after{width:8px;height:8px;margin-top:-4px}
   .label{padding:10px 12px}
+  .logo{width:42px;height:42px}
   h1{font-size:19px}
   .sub{font-size:13px}
   .tools{width:100%}
-  .search{flex:1;width:auto;min-width:0}
-  .inside{padding:12px 12px 20px}
+  .search{flex:1 1 100%;width:auto;min-width:0}
+  .install{flex:1 1 100%;justify-content:center}
+  .row,.guide{margin-left:16px;margin-right:16px}
+  .box{margin:0 8px;padding:12px 14px 18px;box-shadow:inset 10px 0 0 var(--wallside),inset -10px 0 0 var(--wallside),inset 0 12px 16px rgba(0,0,0,.45)}
   .grid{grid-template-columns:1fr}
+  .pull-h{width:110px}
+  .feet{margin:0 20px}
 }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div class="lid" aria-hidden="true"></div>
   <div class="cab">
-    <header class="drawer">
-      <div class="label">
-        <div class="brand">
-          <div class="logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M7 3h9"/></svg></div>
-          <div>
-            <h1>CH Smart Cabinet</h1>
-            <p class="sub">클릭 한 번으로 열리는 선생님의 스마트 서랍장<br>자주 쓰는 업무 프로그램부터 행정 앱까지, 필요한 모든 도구를 한곳에 쏙!</p>
+    <header class="front d1" id="d1">
+      <div class="holder">
+        <div class="label">
+          <div class="brand">
+            <div class="logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M7 3h9"/></svg></div>
+            <div>
+              <h1>CH Smart Cabinet</h1>
+              <p class="sub">클릭 한 번으로 열리는 선생님의 스마트 서랍장<br>자주 쓰는 업무 프로그램부터 행정 앱까지, 필요한 모든 도구를 한곳에 쏙!</p>
+            </div>
           </div>
-        </div>
-        <div class="tools">
-          <input class="search" id="q" type="search" placeholder="앱 이름 검색" aria-label="앱 이름 검색" autocomplete="off">
-          <button class="install" id="install" type="button"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>바탕화면에 설치</button>
+          <div class="tools">
+            <input class="search" id="q" type="search" placeholder="앱 이름 검색" aria-label="앱 이름 검색" autocomplete="off">
+            <button class="install" id="install" type="button"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>바탕화면에 설치</button>
+          </div>
         </div>
       </div>
       <div class="guide" id="guide" role="status" aria-live="polite"></div>
-      <nav class="chips" id="chips" aria-label="카테고리"></nav>
-      <div class="handle" aria-hidden="true"></div>
+      <div class="row">
+        <nav class="chips" id="chips" aria-label="카테고리"></nav>
+        <div class="lock" aria-hidden="true"></div>
+      </div>
+      <span class="pull-h" aria-hidden="true"></span>
     </header>
-    <main class="inside">
-      <div class="rail" aria-hidden="true"></div>
-      <div class="grid" id="grid"></div>
-      <p class="empty" id="empty">찾는 앱이 없습니다. 다른 이름으로 검색해 보세요.</p>
-    </main>
+
+    <div class="slot">
+      <div class="drawer" id="drawer">
+        <main class="box">
+          <div class="rail" aria-hidden="true"></div>
+          <div class="grid" id="grid"></div>
+          <p class="empty" id="empty">찾는 앱이 없습니다. 다른 이름으로 검색해 보세요.</p>
+        </main>
+        <div class="front d2" id="d2" aria-hidden="true"><span class="tag">APPS</span><span class="pull-h"></span></div>
+      </div>
+    </div>
+
+    <div class="front d3" aria-hidden="true"><span class="tag">·</span><span class="pull-h"></span></div>
   </div>
+  <div class="plinth" aria-hidden="true"></div>
+  <div class="feet" aria-hidden="true"><i></i><i></i></div>
 
   <footer class="stage">
     <svg class="school" viewBox="0 -9 620 70" role="img" aria-label="창현고등학교 교사 전용">
@@ -263,11 +320,25 @@ render();
 
 /* ===== 서랍 열림 효과: 처음 열 때 한 번만 ===== */
 (function(){
-  var parts = [document.querySelector(".inside"), document.querySelector(".drawer")];
-  parts.forEach(function(el){ el.classList.add("intro"); });
+  var drawer = document.getElementById("drawer");
+  var d1 = document.getElementById("d1");
+  var d2 = document.getElementById("d2");
+  var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (still || !drawer.animate && !("animation" in document.body.style)) return;
+  var from = -(drawer.offsetHeight - d2.offsetHeight);
+  drawer.style.setProperty("--from", from + "px");
+  drawer.style.transform = "translateY(" + from + "px) scale(.985)";
   setTimeout(function(){
-    parts.forEach(function(el){ el.classList.remove("intro"); });
-  }, 1800);
+    d1.classList.add("tug");
+    setTimeout(function(){
+      drawer.style.transform = "";
+      drawer.classList.add("go");
+    }, 250);
+  }, 150);
+  setTimeout(function(){
+    drawer.classList.remove("go");
+    d1.classList.remove("tug");
+  }, 2600);
 })();
 
 /* ===== 바탕화면에 설치 ===== */
