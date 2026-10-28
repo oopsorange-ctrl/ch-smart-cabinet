@@ -5,7 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>CH Smart Cabinet</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23222' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'/%3E%3C/svg%3E">
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="/icons/favicon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1f3a5f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CH Cabinet">
 <style>
 :root{
   --wall:#d3d7da;--steel:#bfc7cd;--steel-d:#8f9aa2;--face:#e1e6ea;
@@ -56,6 +62,34 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 .dz svg{width:15px;height:15px}
 .empty{display:none;color:#c7cdd2;padding:6px 0 0;font-size:14px}
 
+/* 바탕화면 설치 */
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.install{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border:none;border-radius:8px;background:#1f3a5f;color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
+.install:hover{background:#2a4c78}
+.install svg{width:16px;height:16px}
+.guide{display:none;margin:0 0 14px;background:var(--card);border:2px solid #1f3a5f;border-radius:8px;padding:12px 16px;font-size:14px;color:var(--ink2)}
+.guide.show{display:block}
+.guide b{color:var(--ink)}
+.guide ol{margin:6px 0 4px;padding-left:20px}
+.guide li{margin:2px 0}
+.guide .x{float:right;border:none;background:transparent;color:var(--ink3);font:inherit;font-size:18px;line-height:1;cursor:pointer;padding:0 0 0 8px}
+.guide .ok{color:#0F6E56;font-weight:600}
+@media (display-mode: standalone){ .install{display:none} }
+
+/* 서랍 열림 효과 */
+.inside.intro{animation:drawerOpen .75s cubic-bezier(.2,.8,.2,1) both}
+@keyframes drawerOpen{
+  from{transform:translateY(-22px);clip-path:inset(0 0 100% 0 round 12px)}
+  to{transform:none;clip-path:inset(0 0 0 0 round 12px)}
+}
+.inside.intro .fd{animation:folderUp .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.5s + var(--i) * .1s)}
+@keyframes folderUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.drawer.intro .handle{animation:tug .5s ease-out .15s both}
+@keyframes tug{0%{transform:none}40%{transform:translateY(3px)}100%{transform:none}}
+@media (prefers-reduced-motion: reduce){
+  .inside.intro,.inside.intro .fd,.drawer.intro .handle{animation:none}
+}
+
 /* 학교 현수막과 선생님들 */
 .stage{max-width:640px;margin:34px auto 0}
 .school{display:block;width:100%;height:auto;overflow:visible}
@@ -70,7 +104,8 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
   .label{padding:10px 12px}
   h1{font-size:19px}
   .sub{font-size:13px}
-  .search{width:100%}
+  .tools{width:100%}
+  .search{flex:1;width:auto;min-width:0}
   .inside{padding:12px 12px 20px}
   .grid{grid-template-columns:1fr}
 }
@@ -88,8 +123,12 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
             <p class="sub">클릭 한 번으로 열리는 선생님의 스마트 서랍장<br>자주 쓰는 업무 프로그램부터 행정 앱까지, 필요한 모든 도구를 한곳에 쏙!</p>
           </div>
         </div>
-        <input class="search" id="q" type="search" placeholder="앱 이름 검색" aria-label="앱 이름 검색" autocomplete="off">
+        <div class="tools">
+          <input class="search" id="q" type="search" placeholder="앱 이름 검색" aria-label="앱 이름 검색" autocomplete="off">
+          <button class="install" id="install" type="button"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>바탕화면에 설치</button>
+        </div>
       </div>
+      <div class="guide" id="guide" role="status" aria-live="polite"></div>
       <nav class="chips" id="chips" aria-label="카테고리"></nav>
       <div class="handle" aria-hidden="true"></div>
     </header>
@@ -184,11 +223,11 @@ function buildChips(){
   });
 }
 
-function folder(a){
+function folder(a, i){
   var btn = a.url
     ? '<a class="btn" href="' + esc(a.url) + '" target="_blank" rel="noopener noreferrer">' + svg(a.action === "다운로드" ? "download" : "open") + esc(a.action) + '</a>'
     : '<button class="btn" type="button" data-pending="1">' + svg("download") + esc(a.action) + '</button><span class="note" hidden>링크 준비 중입니다.</span>';
-  return '<div class="fd" style="--k:' + a.color + '">' +
+  return '<div class="fd" style="--k:' + a.color + ';--i:' + i + '">' +
     '<div class="tb">' + svg(a.icon) + esc(a.tab) + '</div>' +
     '<div class="bd"><p>' + esc(a.desc) + '</p>' + btn + '</div></div>';
 }
@@ -202,7 +241,7 @@ function render(){
   });
   var html = list.map(folder).join("");
   if (state.cat === "all" && !q) {
-    html += '<div class="fd dz"><div class="tb">새 폴더</div><div class="bd"><span>' + svg("plus") + '추가 예정</span></div></div>';
+    html += '<div class="fd dz" style="--i:' + list.length + '"><div class="tb">새 폴더</div><div class="bd"><span>' + svg("plus") + '추가 예정</span></div></div>';
   }
   document.getElementById("grid").innerHTML = html;
   document.getElementById("empty").style.display = list.length ? "none" : "block";
@@ -221,6 +260,77 @@ document.getElementById("q").addEventListener("input", function(e){
 
 buildChips();
 render();
+
+/* ===== 서랍 열림 효과: 처음 열 때 한 번만 ===== */
+(function(){
+  var parts = [document.querySelector(".inside"), document.querySelector(".drawer")];
+  parts.forEach(function(el){ el.classList.add("intro"); });
+  setTimeout(function(){
+    parts.forEach(function(el){ el.classList.remove("intro"); });
+  }, 1800);
+})();
+
+/* ===== 바탕화면에 설치 ===== */
+(function(){
+  var btn = document.getElementById("install");
+  var guide = document.getElementById("guide");
+  var deferred = null;
+
+  var standalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+  if (standalone) { btn.style.display = "none"; }
+
+  function show(html){
+    guide.innerHTML = '<button class="x" type="button" aria-label="안내 닫기">×</button>' + html;
+    guide.classList.add("show");
+  }
+  guide.addEventListener("click", function(e){
+    if (e.target.closest(".x")) guide.classList.remove("show");
+  });
+
+  window.addEventListener("beforeinstallprompt", function(e){
+    e.preventDefault();
+    deferred = e;
+  });
+  window.addEventListener("appinstalled", function(){
+    deferred = null;
+    btn.style.display = "none";
+    show('<span class="ok">설치 완료!</span> 이제 바탕화면의 <b>CH Smart Cabinet</b> 아이콘을 누르면 바로 서랍이 열립니다.<br>Edge에서 설치하셨다면, 이어서 뜨는 창에서 <b>“바탕 화면 바로 가기 만들기”</b>에 체크해 주세요.');
+  });
+
+  function manualGuide(){
+    var ua = navigator.userAgent;
+    var isIOS = /iPhone|iPad|iPod/.test(ua);
+    var isAndroid = /Android/.test(ua);
+    var isEdge = /Edg\//.test(ua);
+    var isChrome = /Chrome\//.test(ua) && !isEdge;
+    if (isIOS) {
+      show('<b>아이폰·아이패드에서 설치하기</b><ol><li>사파리 아래쪽의 <b>공유 버튼</b>(네모에 위쪽 화살표)을 누릅니다.</li><li><b>홈 화면에 추가</b>를 누르고 <b>추가</b>를 누릅니다.</li></ol>');
+    } else if (isAndroid) {
+      show('<b>안드로이드 폰에서 설치하기</b><ol><li>크롬 오른쪽 위 <b>⋮</b> 메뉴를 누릅니다.</li><li><b>홈 화면에 추가</b> 또는 <b>앱 설치</b>를 누릅니다.</li></ol>');
+    } else if (isEdge) {
+      show('<b>Edge에서 설치하기</b><ol><li>오른쪽 위 <b>⋯</b> 메뉴를 누릅니다.</li><li><b>앱 → 이 사이트를 앱으로 설치</b>를 누르고 <b>설치</b>를 누릅니다.</li><li>이어서 뜨는 창에서 <b>“바탕 화면 바로 가기 만들기”</b>에 체크합니다.</li></ol>이미 설치하셨다면 바탕화면이나 시작 메뉴의 <b>CH Smart Cabinet</b>을 찾아 보세요.');
+    } else if (isChrome) {
+      show('<b>크롬에서 설치하기</b><ol><li>주소창 오른쪽 끝의 <b>설치 아이콘</b>(모니터에 화살표)을 누릅니다.</li><li>안 보이면 오른쪽 위 <b>⋮ → 전송, 저장, 공유 → 페이지를 앱으로 설치</b>를 누릅니다.</li></ol>이미 설치하셨다면 바탕화면이나 시작 메뉴의 <b>CH Smart Cabinet</b>을 찾아 보세요.');
+    } else {
+      show('이 브라우저에서는 설치 버튼이 지원되지 않습니다. <b>Edge</b>나 <b>크롬</b>으로 이 주소를 열어 다시 눌러 주세요.');
+    }
+  }
+
+  btn.addEventListener("click", function(){
+    if (!deferred) { manualGuide(); return; }
+    deferred.prompt();
+    deferred.userChoice.then(function(choice){
+      if (choice.outcome !== "accepted") {
+        show('설치를 취소하셨습니다. 필요할 때 다시 <b>바탕화면에 설치</b>를 눌러 주세요.');
+      }
+      deferred = null;
+    });
+  });
+
+  if ("serviceWorker" in navigator && location.protocol !== "file:") {
+    navigator.serviceWorker.register("/sw.js").catch(function(){});
+  }
+})();
 
 /* ===== 픽셀 선생님 30명 ===== */
 (function(){
