@@ -70,7 +70,7 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 .drawer{position:relative;z-index:2;will-change:transform}
 .lower{position:absolute;left:0;right:0;z-index:1}
 .d2,.lower{display:flex;flex-direction:column;justify-content:flex-start;padding:18px 0 14px}
-.box{background:var(--box);margin:0 12px;padding:14px 22px 22px;
+.box{background:var(--box);margin:0;border-radius:6px 6px 0 0;padding:14px 22px 22px;
   box-shadow:inset 16px 0 0 var(--wallside),inset -16px 0 0 var(--wallside),inset 0 12px 16px rgba(0,0,0,.45)}
 .rail{height:9px;border-radius:5px;background:#9aa3aa;margin:0 0 20px}
 .d2{box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.14),0 -6px 12px rgba(0,0,0,.25)}
@@ -142,7 +142,7 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
   .search{flex:1 1 100%;width:auto;min-width:0}
   .install{flex:1 1 100%;justify-content:center}
   .row,.guide{margin-left:16px;margin-right:16px}
-  .box{margin:0 8px;padding:12px 14px 18px;box-shadow:inset 10px 0 0 var(--wallside),inset -10px 0 0 var(--wallside),inset 0 12px 16px rgba(0,0,0,.45)}
+  .box{margin:0;padding:12px 14px 18px;box-shadow:inset 10px 0 0 var(--wallside),inset -10px 0 0 var(--wallside),inset 0 12px 16px rgba(0,0,0,.45)}
   .grid{grid-template-columns:1fr}
   .pull-h{width:110px}
   .feet{margin:0 20px}
@@ -219,6 +219,7 @@ var ICONS = {
   person: '<path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
   calendar: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/>',
   chat: '<path d="M4 5h16v11H9l-5 4z"/>',
+  qr: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 14h2M14 18h2M18 18h2v2"/>',
   download: '<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>',
   open: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
   plus: '<path d="M12 5v14M5 12h14"/>'
@@ -230,6 +231,12 @@ var APPS = [
     tab: "자기주도학습 출석", name: "자기주도학습 출석 시스템",
     desc: "6층 자기주도학습실 좌석 배치도로 출석을 확인하고 기록합니다.",
     url: "https://self-study-attendance.vercel.app", action: "열기"
+  },
+  {
+    cat: "att", color: "#534AB7", icon: "qr",
+    tab: "연수 출석", name: "전체 연수 출석 시스템",
+    desc: "연수별 QR을 만들어 전자칠판에 띄우고, 교직원 출석과 서명을 기록합니다.",
+    url: "https://changhyun-training-attsys.vercel.app/", action: "열기"
   },
   {
     cat: "work", color: "#185FA5", icon: "calendar",
