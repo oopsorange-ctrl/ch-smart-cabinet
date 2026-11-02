@@ -64,36 +64,46 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 .lock{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#f1f4f6,#8c969d);border:1px solid var(--edge);position:relative;flex:none}
 .lock::after{content:"";position:absolute;left:50%;top:6px;width:4px;height:12px;margin-left:-2px;border-radius:2px;background:#3a4147}
 
-/* 서랍들: 이름표(OPEN/CLOSE)를 누르면 위쪽 앱 칸이 열리고 닫힙니다. 서랍은 DRAWERS 목록대로 아래로 쌓입니다 */
-#drawers{display:flex;flex-direction:column;gap:14px}
-.unit[hidden]{display:none}
-.pane{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s cubic-bezier(.3,.05,.25,1)}
-.unit.open .pane{grid-template-rows:1fr}
-.pane>.inner{overflow:hidden;min-height:0;visibility:hidden;transition:visibility 0s .55s;border-radius:7px 7px 0 0}
-.unit.open .pane>.inner{visibility:visible;transition-delay:0s}
-.d2{display:flex;flex-direction:column;justify-content:flex-start;padding:18px 0 14px;cursor:pointer}
-.box{background:var(--box);margin:0;border-radius:6px 6px 0 0;padding:14px 22px 22px;
+/* 서랍들: 캐비닛(.bay)의 크기는 서랍 칸 수로만 정해지고, 서랍을 열고 닫아도 변하지 않습니다.
+   서랍을 열면 앱 칸(.pane, 높이 --C = 서랍 2칸 + 틈 1개)이 생기고, 아래 서랍들은 밀려 내려가 가려집니다. */
+.bay{--H:124px;--g:14px;--C:calc(2 * var(--H) + var(--g));display:flex;flex-direction:column;gap:var(--g);
+  height:calc(var(--n) * var(--H) + (var(--n) - 1) * var(--g));overflow:hidden;border-radius:7px}
+.unit{flex:none}
+.pane{height:0;overflow:hidden;visibility:hidden;border-radius:7px 7px 0 0;transition:height .55s cubic-bezier(.3,.05,.25,1),visibility 0s .55s}
+.unit.open .pane{height:var(--C);visibility:visible;transition-delay:0s}
+.box{height:100%;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#6a737a transparent;background:var(--box);margin:0;border-radius:6px 6px 0 0;padding:14px 22px 22px;
   box-shadow:inset 16px 0 0 var(--wallside),inset -16px 0 0 var(--wallside),inset 0 12px 16px rgba(0,0,0,.45)}
 .rail{height:9px;border-radius:5px;background:#9aa3aa;margin:0 0 20px}
-.d2{box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.14),0 -6px 12px rgba(0,0,0,.25)}
-/* 이름표 겸 열기/닫기 버튼 */
-.tag{display:flex;align-items:center;justify-content:space-between;gap:16px;min-width:230px;margin:0 auto 10px;padding:8px 10px 8px 18px;font:inherit;font-size:16px;font-weight:700;letter-spacing:1px;color:#2f3a42;cursor:pointer;
-  background:linear-gradient(#f4f6f7,#dde2e5);border:2px solid #8a949b;border-radius:7px;box-shadow:0 2px 0 rgba(0,0,0,.18)}
-.tag:hover{background:linear-gradient(#ffffff,#e6ebee)}
-.tag:focus-visible{outline:3px solid #378ADD;outline-offset:2px}
-.tag em{font-style:normal;font-size:12px;font-weight:600;letter-spacing:0;color:#6a747b;margin-left:6px}
-.tag .st{display:inline-flex;align-items:center;gap:5px;padding:3px 12px;border-radius:999px;background:#1f3a5f;color:#fff;font-size:12px;font-weight:700;letter-spacing:2px}
-.tag .st::after{content:"";width:6px;height:6px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .3s}
-.unit.open .tag .st{background:#5c676f}
-.unit.open .tag .st::after{transform:rotate(-135deg) translateY(-1px)}
-/* 처음에는 모든 서랍이 닫혀 있고, 누르기 전까지 이름표가 깜빡입니다 */
-.cab.fresh .unit:not(.open) .tag{animation:blink 1.2s ease-in-out infinite}
+.d2{height:var(--H);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;cursor:pointer;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.14)}
+.unit.spare .d2{cursor:default}
+.unit.dim .d2{opacity:.5;cursor:default}
+.dr{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap}
+/* 라벨 꽂이: 금속 틀에 종이 라벨을 끼운 모양 */
+.lh{position:relative;background:linear-gradient(#b4bcc2,#8a949b);border-radius:6px;padding:5px 18px;box-shadow:0 2px 0 rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.55)}
+.lh::before,.lh::after{content:"";position:absolute;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#eef2f4,#6f7a82);box-shadow:0 1px 0 rgba(0,0,0,.3)}
+.lh::before{left:6px}.lh::after{right:6px}
+.lc{display:flex;align-items:center;justify-content:center;gap:14px;min-width:150px;padding:5px 20px;background:var(--card);border-radius:3px;
+  font-size:24px;font-weight:800;letter-spacing:4px;line-height:1.5;color:var(--ink);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12),inset 0 2px 3px rgba(0,0,0,.1)}
+.lc .ct{padding-left:14px;border-left:2px solid var(--line);color:var(--ink2);letter-spacing:0}
+/* 열기/닫기 버튼 */
+.tog{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-width:132px;padding:11px 20px;font:inherit;font-size:17px;font-weight:800;letter-spacing:2px;color:#fff;
+  background:#1f3a5f;border:2px solid #14263f;border-radius:8px;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.3)}
+.tog:hover{background:#2a4c78}
+.tog:focus-visible{outline:3px solid #378ADD;outline-offset:2px}
+.tog::after{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .3s}
+.unit.open .tog{background:#5c676f;border-color:#444d54}
+.unit.open .tog::after{transform:rotate(-135deg) translateY(-1px)}
+/* 처음에는 모든 서랍이 닫혀 있고, 누르기 전까지 버튼이 주황색으로 깜빡입니다 */
+.cab.fresh .unit:not(.open) .tog{animation:blink 1.2s ease-in-out infinite}
 @keyframes blink{
-  0%,100%{border-color:#8a949b;box-shadow:0 2px 0 rgba(0,0,0,.18),0 0 0 0 rgba(255,138,61,0)}
-  50%{border-color:#ff8a3d;box-shadow:0 2px 0 rgba(0,0,0,.18),0 0 0 5px rgba(255,138,61,.42),0 0 20px rgba(255,138,61,.85)}
+  0%,100%{border-color:#14263f;box-shadow:0 3px 0 rgba(0,0,0,.3),0 0 0 0 rgba(255,138,61,0)}
+  50%{border-color:#ff8a3d;box-shadow:0 3px 0 rgba(0,0,0,.3),0 0 0 5px rgba(255,138,61,.42),0 0 20px rgba(255,138,61,.85)}
 }
 .unit.go .fd{animation:folderUp .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.2s + var(--i) * .09s)}
 @keyframes folderUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.grid .none{grid-column:1/-1;margin:0;color:var(--ink3);font-size:14px}
 .hintline{margin:0;font-size:14px;color:var(--ink2)}
 
 /* 폴더 */
@@ -129,13 +139,13 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 .unit.open .d2 .pull-h{animation:tug .4s ease-out both}
 @keyframes tug{45%{transform:translateY(4px) scaleX(.97)}}
 @media (prefers-reduced-motion: reduce){
-  .pane,.pane>.inner,.tag .st::after{transition:none}
+  .pane,.tog::after{transition:none}
   .unit.go .fd,.unit.open .d2 .pull-h{animation:none}
-  .cab.fresh .unit:not(.open) .tag{animation:none;border-color:#ff8a3d;box-shadow:0 2px 0 rgba(0,0,0,.18),0 0 0 4px rgba(255,138,61,.5)}
+  .cab.fresh .unit:not(.open) .tog{animation:none;border-color:#ff8a3d;box-shadow:0 3px 0 rgba(0,0,0,.3),0 0 0 4px rgba(255,138,61,.5)}
 }
 
 /* 학교 현수막과 선생님들 */
-.stage{max-width:640px;margin:34px auto 0}
+.stage{max-width:450px;margin:26px auto 0}
 .school{display:block;width:100%;height:auto;overflow:visible}
 .school text{font-family:inherit}
 #crowd{display:block;width:100%;height:auto;margin-top:-10px;image-rendering:pixelated;position:relative}
@@ -160,7 +170,10 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
   .box{margin:0;padding:12px 14px 18px;box-shadow:inset 10px 0 0 var(--wallside),inset -10px 0 0 var(--wallside),inset 0 12px 16px rgba(0,0,0,.45)}
   .grid{grid-template-columns:1fr}
   .pull-h{width:110px}
-  .tag{min-width:200px;font-size:15px}
+  .bay{--H:116px}
+  .lc{min-width:110px;font-size:20px;padding:4px 14px;letter-spacing:2px}
+  .tog{min-width:108px;padding:10px 14px;font-size:15px}
+  .dr{gap:10px}
   .feet{margin:0 20px}
 }
 </style>
@@ -187,14 +200,13 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
       </div>
       <div class="guide" id="guide" role="status" aria-live="polite"></div>
       <div class="row">
-        <p class="hintline">서랍 이름표의 <b>OPEN</b>을 눌러 열어 보세요.</p>
+        <p class="hintline" id="hintline"></p>
         <div class="lock" aria-hidden="true"></div>
       </div>
       <span class="pull-h" aria-hidden="true"></span>
     </header>
 
-    <main id="drawers"></main>
-    <p class="empty" id="empty">찾는 앱이 없습니다. 다른 이름으로 검색해 보세요.</p>
+    <main class="bay" id="drawers"></main>
   </div>
   <div class="plinth" aria-hidden="true"></div>
   <div class="feet" aria-hidden="true"><i></i><i></i></div>
@@ -279,23 +291,31 @@ function esc(s){
   });
 }
 
-/* open: 지금 열린 서랍(없으면 null, 한 번에 하나만) / q: 검색어 / ov: 검색 중 서랍별로 직접 열고 닫은 기록 */
-var state = { open: null, q: "", ov: {} };
+/* open: 지금 열린 서랍(없으면 null, 한 번에 하나만) / q: 검색어 */
+var state = { open: null, q: "" };
 var cab = document.getElementById("cab");
 var wrap = document.getElementById("drawers");
+var SPARE = 2;   /* 맨 아래에 항상 두는 빈 서랍 수. 열린 서랍 때문에 밀려 내려갈 서랍이 있어야 캐비닛 크기가 변하지 않습니다 */
+var HINT = '서랍 라벨 옆 <b>OPEN</b>을 눌러 열어 보세요.';
 
 function buildDrawers(){
-  wrap.innerHTML = DRAWERS.map(function(d){
+  var html = DRAWERS.map(function(d){
+    var id = "pane-" + esc(d.cat);
     return '<section class="unit" data-cat="' + esc(d.cat) + '">' +
-      '<div class="pane" id="pane-' + esc(d.cat) + '"><div class="inner"><div class="box">' +
-        '<div class="rail" aria-hidden="true"></div><div class="grid"></div>' +
-      '</div></div></div>' +
+      '<div class="pane" id="' + id + '"><div class="box"><div class="rail" aria-hidden="true"></div><div class="grid"></div></div></div>' +
       '<div class="front d2">' +
-        '<button class="tag" type="button" aria-expanded="false" aria-controls="pane-' + esc(d.cat) + '">' +
-          '<span class="nm">' + esc(d.label) + '<em></em></span><span class="st">OPEN</span></button>' +
+        '<div class="dr">' +
+          '<div class="lh"><div class="lc"><span class="nm">' + esc(d.label) + '</span><span class="ct">0</span></div></div>' +
+          '<button class="tog" type="button" aria-expanded="false" aria-controls="' + id + '" aria-label="' + esc(d.label) + ' 서랍"><span class="st">OPEN</span></button>' +
+        '</div>' +
         '<span class="pull-h" aria-hidden="true"></span>' +
       '</div></section>';
   }).join("");
+  for (var s = 0; s < SPARE; s++) {
+    html += '<section class="unit spare" aria-hidden="true"><div class="front d2"><div class="dr"><div class="lh"><div class="lc">&nbsp;</div></div></div><span class="pull-h"></span></div></section>';
+  }
+  wrap.innerHTML = html;
+  wrap.style.setProperty("--n", DRAWERS.length + SPARE);
 }
 
 function appsIn(cat){
@@ -305,24 +325,11 @@ function appsIn(cat){
   });
 }
 
-/* 지금 열려 있어야 하는 서랍(cat → true) */
-function wantOpen(matches){
-  var set = {};
-  if (state.q.trim()) {
-    DRAWERS.forEach(function(d){
-      if (matches[d.cat] && state.ov[d.cat] !== false) set[d.cat] = true;
-    });
-  } else if (state.open) {
-    set[state.open] = true;
-  }
-  return set;
-}
-
-function applyOpen(set){
-  wrap.querySelectorAll(".unit").forEach(function(u){
-    var on = !!set[u.getAttribute("data-cat")], was = u.classList.contains("open");
+function applyOpen(){
+  wrap.querySelectorAll(".unit[data-cat]").forEach(function(u){
+    var on = u.getAttribute("data-cat") === state.open, was = u.classList.contains("open");
     u.classList.toggle("open", on);
-    var b = u.querySelector(".tag");
+    var b = u.querySelector(".tog");
     b.setAttribute("aria-expanded", on ? "true" : "false");
     b.querySelector(".st").textContent = on ? "CLOSE" : "OPEN";
     if (on && !was) {                       /* 새로 열릴 때만 폴더가 올라오는 효과 */
@@ -343,39 +350,44 @@ function folder(a, i){
 }
 
 function render(){
-  var searching = !!state.q.trim(), total = 0, matches = {};
-  wrap.querySelectorAll(".unit").forEach(function(u){
+  var searching = !!state.q.trim(), matches = {}, first = null, total = 0;
+  wrap.querySelectorAll(".unit[data-cat]").forEach(function(u){
     var cat = u.getAttribute("data-cat"), list = appsIn(cat);
     var all = APPS.filter(function(a){ return a.cat === cat; }).length;
-    matches[cat] = list.length;
-    total += list.length;
-    u.hidden = searching && !list.length;           /* 검색 중에는 해당 앱이 없는 서랍을 숨김 */
-    u.querySelector(".tag em").textContent = all;
-    var html = list.map(folder).join("");
+    matches[cat] = list.length; total += list.length;
+    if (list.length && !first) first = cat;
+    u.classList.toggle("dim", searching && !list.length);
+    u.querySelector(".ct").textContent = searching ? list.length : all;
+    var html;
     if (!all) {                                      /* 아직 앱이 없는 서랍 */
       html = '<div class="fd dz" style="--i:0"><div class="tb">새 폴더</div><div class="bd"><span>' + svg("plus") + '추가 예정</span></div></div>';
+    } else if (!list.length) {
+      html = '<p class="none">찾는 앱이 없습니다.</p>';
+    } else {
+      html = list.map(folder).join("");
     }
     u.querySelector(".grid").innerHTML = html;
   });
-  document.getElementById("empty").style.display = (searching && !total) ? "block" : "none";
-  applyOpen(wantOpen(matches));
+  if (searching && !(state.open && matches[state.open])) {   /* 검색 중에는 결과가 있는 첫 서랍을 자동으로 엽니다 */
+    state.open = first;
+    if (first) cab.classList.remove("fresh");
+  }
+  document.getElementById("hintline").innerHTML = (searching && !total) ? "찾는 앱이 없습니다. 다른 이름으로 검색해 보세요." : HINT;
+  applyOpen();
 }
 
 function toggle(cat){
   cab.classList.remove("fresh");                    /* 한 번이라도 눌렀으면 깜빡임을 멈춤 */
-  if (state.q.trim()) {
-    var u = wrap.querySelector('.unit[data-cat="' + cat + '"]');
-    state.ov[cat] = !u.classList.contains("open");  /* 검색 중에는 서랍마다 따로 열고 닫음 */
-  } else {
-    state.open = (state.open === cat) ? null : cat;  /* 하나를 열면 나머지는 닫힘 */
-  }
+  state.open = (state.open === cat) ? null : cat;   /* 하나를 열면 나머지는 닫힘 */
   render();
 }
 
 wrap.addEventListener("click", function(e){
   var f = e.target.closest(".d2");
   if (!f) return;
-  toggle(f.parentNode.getAttribute("data-cat"));    /* 이름표나 손잡이 어디를 눌러도 열고 닫힘 */
+  var u = f.parentNode;
+  if (!u.hasAttribute("data-cat") || u.classList.contains("dim")) return;
+  toggle(u.getAttribute("data-cat"));               /* 라벨 옆 버튼이나 손잡이 어디를 눌러도 열고 닫힘 */
 });
 cab.addEventListener("click", function(e){
   var b = e.target.closest("[data-pending]");
@@ -385,7 +397,6 @@ cab.addEventListener("click", function(e){
 });
 document.getElementById("q").addEventListener("input", function(e){
   state.q = e.target.value;
-  state.ov = {};
   render();
 });
 
@@ -464,8 +475,10 @@ render();
   var R = rng(2027);
   function pick(a){ return a[Math.floor(R()*a.length)]; }
 
-  var SKIN=['#f2c9a0','#e0a878','#c68642','#8d5524','#ffdbb4'];
-  var HAIR=['#2b1b0e','#4a2c17','#8b5a2b','#d9a441','#1c1c1c','#a52a2a','#808080'];
+  var SKIN=['#f6d9bd','#f1cfa8','#ecc59b','#e6bb8d','#f8e0c8','#efc9a2'];
+  var HAIR=['#1c1c1c','#1c1c1c','#1c1c1c','#2b1b0e','#2b1b0e','#3a2616','#4a2c17','#6b4a2b','#8a8a8a'];
+  var HAT=['#2a9d8f','#e63946','#1d3557','#f4a261','#6a994e','#5c6b7a','#9b5de5','#ffd166'];
+  var GLASS=['#222','#222','#222','#7b3f00','#c0392b','#1d3557'];
   var SHIRT=['#e63946','#f4a261','#2a9d8f','#457b9d','#9b5de5','#f15bb5','#06d6a0','#ffd166','#118ab2','#ef476f','#8ac926','#ff924c'];
   var PANTS=['#2b2d42','#3a506b','#5c4033','#6c757d','#1d3557','#344e41'];
   var ARMS={
@@ -485,6 +498,7 @@ render();
         x:(r%2?5:0)+i*10+Math.round((R()-.5)*2), y:2+r*6,
         skin:pick(SKIN), hair:pick(HAIR), shirt:pick(SHIRT), pants:pick(PANTS),
         style:Math.floor(R()*3), pose:pick(POSES),
+        hat:R()<.26 ? pick(['cap','bucket','beanie']) : null, hatc:pick(HAT), gl:R()<.32 ? pick(GLASS) : null,
         speed:2+Math.floor(R()*3), phase:Math.floor(R()*4), bob:R()<.35, blink:0
       });
     }
@@ -506,8 +520,12 @@ render();
     P(2,1,5,1,o.hair); P(1,2,7,1,o.hair);
     if (o.style===1){ P(1,3,1,3,o.hair); P(7,3,1,3,o.hair); }
     if (o.style===2){ P(3,0,3,1,o.hair); }
+    if (o.hat==='cap'){ P(2,0,5,2,o.hatc); P(1,2,8,1,o.hatc); }
+    else if (o.hat==='bucket'){ P(2,0,5,2,o.hatc); P(0,2,9,1,o.hatc); }
+    else if (o.hat==='beanie'){ P(2,0,5,1,o.hatc); P(1,1,7,2,o.hatc); }
     var eye = o.blink>0 ? '#7a4a2a' : '#222';
     P(3,5,1,1,eye); P(5,5,1,1,eye);
+    if (o.gl){ P(2,4,5,1,o.gl); P(2,6,5,1,o.gl); P(2,5,1,1,o.gl); P(6,5,1,1,o.gl); P(4,5,1,1,o.skin); }
     P(4,6,1,1, alt && o.bob ? '#d9534f' : '#b5483a');
   }
 
