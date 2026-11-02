@@ -64,19 +64,37 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 .lock{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#f1f4f6,#8c969d);border:1px solid var(--edge);position:relative;flex:none}
 .lock::after{content:"";position:absolute;left:50%;top:6px;width:4px;height:12px;margin-left:-2px;border-radius:2px;background:#3a4147}
 
-/* 가운데 서랍: 당겨 나오는 앱 서랍 */
-/* 2~4번째 칸이 들어가는 자리. 높이는 열렸을 때와 닫혔을 때 같습니다 */
-.bay{position:relative;overflow:hidden;border-radius:7px}
-.drawer{position:relative;z-index:2;will-change:transform}
-.lower{position:absolute;left:0;right:0;z-index:1}
-.d2,.lower{display:flex;flex-direction:column;justify-content:flex-start;padding:18px 0 14px}
+/* 서랍들: 이름표(OPEN/CLOSE)를 누르면 위쪽 앱 칸이 열리고 닫힙니다. 서랍은 DRAWERS 목록대로 아래로 쌓입니다 */
+#drawers{display:flex;flex-direction:column;gap:14px}
+.unit[hidden]{display:none}
+.pane{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s cubic-bezier(.3,.05,.25,1)}
+.unit.open .pane{grid-template-rows:1fr}
+.pane>.inner{overflow:hidden;min-height:0;visibility:hidden;transition:visibility 0s .55s;border-radius:7px 7px 0 0}
+.unit.open .pane>.inner{visibility:visible;transition-delay:0s}
+.d2{display:flex;flex-direction:column;justify-content:flex-start;padding:18px 0 14px;cursor:pointer}
 .box{background:var(--box);margin:0;border-radius:6px 6px 0 0;padding:14px 22px 22px;
   box-shadow:inset 16px 0 0 var(--wallside),inset -16px 0 0 var(--wallside),inset 0 12px 16px rgba(0,0,0,.45)}
 .rail{height:9px;border-radius:5px;background:#9aa3aa;margin:0 0 20px}
 .d2{box-shadow:inset 0 2px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.14),0 -6px 12px rgba(0,0,0,.25)}
-.tag{display:block;width:96px;margin:0 auto 8px;text-align:center;font-size:11px;font-weight:600;letter-spacing:2px;color:#4a545b;
-  background:linear-gradient(#f4f6f7,#dde2e5);border:2px solid #8a949b;border-radius:3px;padding:1px 0}
-.lower .tag{color:transparent}
+/* 이름표 겸 열기/닫기 버튼 */
+.tag{display:flex;align-items:center;justify-content:space-between;gap:16px;min-width:230px;margin:0 auto 10px;padding:8px 10px 8px 18px;font:inherit;font-size:16px;font-weight:700;letter-spacing:1px;color:#2f3a42;cursor:pointer;
+  background:linear-gradient(#f4f6f7,#dde2e5);border:2px solid #8a949b;border-radius:7px;box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.tag:hover{background:linear-gradient(#ffffff,#e6ebee)}
+.tag:focus-visible{outline:3px solid #378ADD;outline-offset:2px}
+.tag em{font-style:normal;font-size:12px;font-weight:600;letter-spacing:0;color:#6a747b;margin-left:6px}
+.tag .st{display:inline-flex;align-items:center;gap:5px;padding:3px 12px;border-radius:999px;background:#1f3a5f;color:#fff;font-size:12px;font-weight:700;letter-spacing:2px}
+.tag .st::after{content:"";width:6px;height:6px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .3s}
+.unit.open .tag .st{background:#5c676f}
+.unit.open .tag .st::after{transform:rotate(-135deg) translateY(-1px)}
+/* 처음에는 모든 서랍이 닫혀 있고, 누르기 전까지 이름표가 깜빡입니다 */
+.cab.fresh .unit:not(.open) .tag{animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{
+  0%,100%{border-color:#8a949b;box-shadow:0 2px 0 rgba(0,0,0,.18),0 0 0 0 rgba(255,138,61,0)}
+  50%{border-color:#ff8a3d;box-shadow:0 2px 0 rgba(0,0,0,.18),0 0 0 5px rgba(255,138,61,.42),0 0 20px rgba(255,138,61,.85)}
+}
+.unit.go .fd{animation:folderUp .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.2s + var(--i) * .09s)}
+@keyframes folderUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.hintline{margin:0;font-size:14px;color:var(--ink2)}
 
 /* 폴더 */
 .grid{--line:#6a737a;--ink3:#aab2b8;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px 16px}
@@ -93,7 +111,7 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 .dz .bd{background:transparent;border:1px dashed var(--line);align-items:center;justify-content:center;color:var(--ink3);font-size:14px}
 .dz .bd span{display:inline-flex;align-items:center;gap:6px}
 .dz svg{width:15px;height:15px}
-.empty{display:none;color:#c7cdd2;padding:6px 0 0;font-size:14px;margin:0}
+.empty{display:none;color:var(--ink2);text-align:center;padding:6px 0;font-size:14px;margin:0}
 
 /* 바탕화면 설치 */
 .install{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border:none;border-radius:8px;background:#1f3a5f;color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
@@ -108,15 +126,12 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 .guide .ok{color:#0F6E56;font-weight:600}
 @media (display-mode: standalone){ .install{display:none} }
 
-/* ===== 서랍 열림 효과 ===== */
-/* 처음에는 4단이 모두 닫힘 → APPS 손잡이가 당겨짐 → APPS 서랍이 빠져나오며 아래 두 칸을 덮음 → 폴더가 올라옴 */
-.drawer.closed .fd,.drawer.go .fd{opacity:0}
-.drawer.go .fd{animation:folderUp .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.75s + var(--i) * .11s)}
-@keyframes folderUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-.d2.tug .pull-h{animation:tug .4s ease-out both}
+.unit.open .d2 .pull-h{animation:tug .4s ease-out both}
 @keyframes tug{45%{transform:translateY(4px) scaleX(.97)}}
 @media (prefers-reduced-motion: reduce){
-  .drawer.go .fd,.d2.tug .pull-h{animation:none;opacity:1}
+  .pane,.pane>.inner,.tag .st::after{transition:none}
+  .unit.go .fd,.unit.open .d2 .pull-h{animation:none}
+  .cab.fresh .unit:not(.open) .tag{animation:none;border-color:#ff8a3d;box-shadow:0 2px 0 rgba(0,0,0,.18),0 0 0 4px rgba(255,138,61,.5)}
 }
 
 /* 학교 현수막과 선생님들 */
@@ -145,6 +160,7 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
   .box{margin:0;padding:12px 14px 18px;box-shadow:inset 10px 0 0 var(--wallside),inset -10px 0 0 var(--wallside),inset 0 12px 16px rgba(0,0,0,.45)}
   .grid{grid-template-columns:1fr}
   .pull-h{width:110px}
+  .tag{min-width:200px;font-size:15px}
   .feet{margin:0 20px}
 }
 </style>
@@ -152,7 +168,7 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 <body>
 <div class="wrap">
   <div class="lid" aria-hidden="true"></div>
-  <div class="cab">
+  <div class="cab fresh" id="cab">
     <header class="front d1" id="d1">
       <div class="holder">
         <div class="label">
@@ -171,24 +187,14 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
       </div>
       <div class="guide" id="guide" role="status" aria-live="polite"></div>
       <div class="row">
-        <nav class="chips" id="chips" aria-label="카테고리"></nav>
+        <p class="hintline">서랍 이름표의 <b>OPEN</b>을 눌러 열어 보세요.</p>
         <div class="lock" aria-hidden="true"></div>
       </div>
       <span class="pull-h" aria-hidden="true"></span>
     </header>
 
-    <div class="bay" id="bay">
-      <div class="drawer" id="drawer">
-        <main class="box" id="box">
-          <div class="rail" aria-hidden="true"></div>
-          <div class="grid" id="grid"></div>
-          <p class="empty" id="empty">찾는 앱이 없습니다. 다른 이름으로 검색해 보세요.</p>
-        </main>
-        <div class="front d2" id="d2" aria-hidden="true"><span class="tag">APPS</span><span class="pull-h"></span></div>
-      </div>
-      <div class="front lower" id="d3" aria-hidden="true"><span class="tag">·</span><span class="pull-h"></span></div>
-      <div class="front lower" id="d4" aria-hidden="true"><span class="tag">·</span><span class="pull-h"></span></div>
-    </div>
+    <main id="drawers"></main>
+    <p class="empty" id="empty">찾는 앱이 없습니다. 다른 이름으로 검색해 보세요.</p>
   </div>
   <div class="plinth" aria-hidden="true"></div>
   <div class="feet" aria-hidden="true"><i></i><i></i></div>
@@ -213,7 +219,11 @@ h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.2px}
 /* ===== 앱 목록: 새 앱은 아래 APPS에 항목 하나를 추가하면 됩니다 ===== */
 var WEEKLY_DOWNLOAD_URL = "https://drive.google.com/drive/folders/1mmXQg5DhpObHW_YkoUu3hOLmlSXFIaje?usp=sharing";  /* 창현 위클리 설치 파일 공유 링크를 여기에 넣으세요 */
 
-var CATS = { work: "업무", att: "출석" };
+/* 서랍 목록: 위에서부터 이 순서로 쌓입니다. 서랍을 늘리려면 한 줄 추가하고, 앱의 cat에 같은 값을 쓰면 됩니다 */
+var DRAWERS = [
+  { cat: "work", label: "업무" },
+  { cat: "att",  label: "출석" }
+];
 
 var ICONS = {
   person: '<path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
@@ -269,25 +279,57 @@ function esc(s){
   });
 }
 
-var state = { cat: "all", q: "" };
+/* open: 지금 열린 서랍(없으면 null, 한 번에 하나만) / q: 검색어 / ov: 검색 중 서랍별로 직접 열고 닫은 기록 */
+var state = { open: null, q: "", ov: {} };
+var cab = document.getElementById("cab");
+var wrap = document.getElementById("drawers");
 
-function buildChips(){
-  var seen = {}, html = '<button class="chip on" data-c="all">전체</button>';
-  APPS.forEach(function(a){
-    if (!seen[a.cat]) {
-      seen[a.cat] = true;
-      html += '<button class="chip" data-c="' + esc(a.cat) + '">' + esc(CATS[a.cat] || a.cat) + '</button>';
-    }
+function buildDrawers(){
+  wrap.innerHTML = DRAWERS.map(function(d){
+    return '<section class="unit" data-cat="' + esc(d.cat) + '">' +
+      '<div class="pane" id="pane-' + esc(d.cat) + '"><div class="inner"><div class="box">' +
+        '<div class="rail" aria-hidden="true"></div><div class="grid"></div>' +
+      '</div></div></div>' +
+      '<div class="front d2">' +
+        '<button class="tag" type="button" aria-expanded="false" aria-controls="pane-' + esc(d.cat) + '">' +
+          '<span class="nm">' + esc(d.label) + '<em></em></span><span class="st">OPEN</span></button>' +
+        '<span class="pull-h" aria-hidden="true"></span>' +
+      '</div></section>';
+  }).join("");
+}
+
+function appsIn(cat){
+  var q = state.q.trim().toLowerCase();
+  return APPS.filter(function(a){
+    return a.cat === cat && (!q || (a.name + " " + a.tab).toLowerCase().indexOf(q) > -1);
   });
-  var nav = document.getElementById("chips");
-  nav.innerHTML = html;
-  nav.addEventListener("click", function(e){
-    var b = e.target.closest(".chip");
-    if (!b) return;
-    nav.querySelectorAll(".chip").forEach(function(x){ x.classList.remove("on"); });
-    b.classList.add("on");
-    state.cat = b.getAttribute("data-c");
-    render();
+}
+
+/* 지금 열려 있어야 하는 서랍(cat → true) */
+function wantOpen(matches){
+  var set = {};
+  if (state.q.trim()) {
+    DRAWERS.forEach(function(d){
+      if (matches[d.cat] && state.ov[d.cat] !== false) set[d.cat] = true;
+    });
+  } else if (state.open) {
+    set[state.open] = true;
+  }
+  return set;
+}
+
+function applyOpen(set){
+  wrap.querySelectorAll(".unit").forEach(function(u){
+    var on = !!set[u.getAttribute("data-cat")], was = u.classList.contains("open");
+    u.classList.toggle("open", on);
+    var b = u.querySelector(".tag");
+    b.setAttribute("aria-expanded", on ? "true" : "false");
+    b.querySelector(".st").textContent = on ? "CLOSE" : "OPEN";
+    if (on && !was) {                       /* 새로 열릴 때만 폴더가 올라오는 효과 */
+      u.classList.add("go");
+      clearTimeout(u._t);
+      u._t = setTimeout(function(){ u.classList.remove("go"); }, 1400);
+    }
   });
 }
 
@@ -301,21 +343,41 @@ function folder(a, i){
 }
 
 function render(){
-  var q = state.q.trim().toLowerCase();
-  var list = APPS.filter(function(a){
-    var okC = state.cat === "all" || a.cat === state.cat;
-    var okQ = !q || (a.name + " " + a.tab).toLowerCase().indexOf(q) > -1;
-    return okC && okQ;
+  var searching = !!state.q.trim(), total = 0, matches = {};
+  wrap.querySelectorAll(".unit").forEach(function(u){
+    var cat = u.getAttribute("data-cat"), list = appsIn(cat);
+    var all = APPS.filter(function(a){ return a.cat === cat; }).length;
+    matches[cat] = list.length;
+    total += list.length;
+    u.hidden = searching && !list.length;           /* 검색 중에는 해당 앱이 없는 서랍을 숨김 */
+    u.querySelector(".tag em").textContent = all;
+    var html = list.map(folder).join("");
+    if (!all) {                                      /* 아직 앱이 없는 서랍 */
+      html = '<div class="fd dz" style="--i:0"><div class="tb">새 폴더</div><div class="bd"><span>' + svg("plus") + '추가 예정</span></div></div>';
+    }
+    u.querySelector(".grid").innerHTML = html;
   });
-  var html = list.map(folder).join("");
-  if (state.cat === "all" && !q && APPS.length < 6) {
-    html += '<div class="fd dz" style="--i:' + list.length + '"><div class="tb">새 폴더</div><div class="bd"><span>' + svg("plus") + '추가 예정</span></div></div>';
-  }
-  document.getElementById("grid").innerHTML = html;
-  document.getElementById("empty").style.display = list.length ? "none" : "block";
+  document.getElementById("empty").style.display = (searching && !total) ? "block" : "none";
+  applyOpen(wantOpen(matches));
 }
 
-document.getElementById("grid").addEventListener("click", function(e){
+function toggle(cat){
+  cab.classList.remove("fresh");                    /* 한 번이라도 눌렀으면 깜빡임을 멈춤 */
+  if (state.q.trim()) {
+    var u = wrap.querySelector('.unit[data-cat="' + cat + '"]');
+    state.ov[cat] = !u.classList.contains("open");  /* 검색 중에는 서랍마다 따로 열고 닫음 */
+  } else {
+    state.open = (state.open === cat) ? null : cat;  /* 하나를 열면 나머지는 닫힘 */
+  }
+  render();
+}
+
+wrap.addEventListener("click", function(e){
+  var f = e.target.closest(".d2");
+  if (!f) return;
+  toggle(f.parentNode.getAttribute("data-cat"));    /* 이름표나 손잡이 어디를 눌러도 열고 닫힘 */
+});
+cab.addEventListener("click", function(e){
   var b = e.target.closest("[data-pending]");
   if (!b) return;
   var note = b.parentNode.querySelector(".note");
@@ -323,67 +385,12 @@ document.getElementById("grid").addEventListener("click", function(e){
 });
 document.getElementById("q").addEventListener("input", function(e){
   state.q = e.target.value;
+  state.ov = {};
   render();
 });
 
-buildChips();
+buildDrawers();
 render();
-
-/* ===== 서랍 열림 효과: 처음 열 때 한 번만 ===== */
-(function(){
-  var drawer = document.getElementById("drawer");
-  var box = document.getElementById("box");
-  var d2 = document.getElementById("d2");
-  var d3 = document.getElementById("d3");
-  var d4 = document.getElementById("d4");
-  var GAP = 12, fullH = 0;
-
-  /* 아래 세 칸(APPS, 3단, 4단)을 같은 높이로 맞춤. 서랍 안은 앱 6개(전체 보기 기준)가 들어가는 높이 */
-  function layout(){
-    if (state.cat === "all" && !state.q.trim()) {
-      box.style.minHeight = "";
-      fullH = box.offsetHeight;
-    }
-    if (!fullH) return;
-    box.style.minHeight = fullH + "px";
-    var h = Math.max(84, Math.round((fullH - 2 * GAP) / 2));
-    var lowerH = Math.round((fullH - 2 * GAP) / 2);
-    d2.style.height = h + "px";
-    d3.style.top = (h + GAP) + "px";
-    d3.style.height = lowerH + "px";
-    d4.style.top = (h + GAP + lowerH + GAP) + "px";
-    d4.style.height = lowerH + "px";
-  }
-  layout();
-  var rt;
-  window.addEventListener("resize", function(){ clearTimeout(rt); rt = setTimeout(layout, 120); });
-
-  var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (still || !drawer.animate) return;
-
-  var up = -box.offsetHeight;
-  drawer.style.transform = "translateY(" + up + "px)";
-  drawer.classList.add("closed");
-
-  setTimeout(function(){
-    d2.classList.add("tug");
-    setTimeout(function(){
-      drawer.classList.remove("closed");
-      drawer.classList.add("go");
-      drawer.style.transform = "";
-      drawer.animate([
-        { transform: "translateY(" + up + "px)" },
-        { transform: "translateY(7px)", offset: .74 },
-        { transform: "translateY(-2px)", offset: .88 },
-        { transform: "translateY(0)" }
-      ], { duration: 1150, easing: "cubic-bezier(.3,.05,.25,1)" });
-      setTimeout(function(){
-        drawer.classList.remove("go");
-        d2.classList.remove("tug");
-      }, 1800);
-    }, 380);
-  }, 500);
-})();
 
 /* ===== 바탕화면에 설치 ===== */
 (function(){
